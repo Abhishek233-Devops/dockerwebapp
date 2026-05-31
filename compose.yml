@@ -1,14 +1,31 @@
 ---
-version: "3"
-services:
- devopsdb:
-   image: abhishekparla/myrepo:db
-   ports:
-     - "3306:3306"
+version: "3.1"
 
- application:
-   image: abhishekparla/myrepo:app
-   ports:
-     - "8080:8080"
-   depends_on:
-     - "devopsdb"
+services:
+  devopsdb:
+    image: abhishekparla/myrepo:db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - devops-net
+
+  application:
+    image: abhishekparla/myrepo:app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - devopsdb
+    volumes:
+      - app_logs:/app/logs
+    networks:
+      - devops-net
+
+volumes:
+  db_data:
+  app_logs:
+
+networks:
+  devops-net:
+    driver: overlay
